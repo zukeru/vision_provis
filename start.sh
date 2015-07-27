@@ -1,7 +1,8 @@
 #!/bin/bash
 
-$playbookname = 'storm.yml'
-$playbookurl = './storm.yml'
+$playbook = 'vision_provis'
+$rollname = 'storm.yml'
+$repo = 'https://github.com/zukeru/' + $playbook + '.git'
 
-#git clone $playbookurl >> ~/ansible.log
-ansible-playbook -i "localhost," -c local $playbookname >> ansible.log
+git clone $repo >> ~/ansible.log
+ansible-playbook -i "localhost," -c local /$playbook/$rollname >> ansible.log
