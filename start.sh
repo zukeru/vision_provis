@@ -1,8 +1,7 @@
 #!/bin/bash
 
-$playbook = 'vision_provis'
-$rollname = 'storm.yml'
-$repo = 'https://github.com/zukeru/' + $playbook + '.git'
 
-git clone $repo >> ~/ansible.log
-ansible-playbook -i "localhost," -c local /$playbook/$rollname >> ansible.log
+export REPO_URL=https://github.com/zukeru/vision_provis.git
+export PLAYBOOK=storm.yml
+
+python provision.py
