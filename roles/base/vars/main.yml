@@ -1,0 +1,31 @@
+---
+repos:
+  - reuters-main.repo
+
+packages:
+  - unzip
+  - zip
+  - screen
+  - ntp
+  - telnet
+  - mlocate
+  - figlet
+  - nmap
+  - lynx
+  - python-magic
+  - bc
+  - git
+  - aws-cli
+
+#   - python-pip
+#to foward syslog to graylog
+graylog_host: graylogger.us-west-2.dev.oneplatform.build
+graylog_port: 9897
+
+# Update only security packages via cron (daily,weekly,monthly,yearly)
+security_update_schedule: weekly
+
+dirs:
+  - "/{{ role_local_facts }}"
+  - "/etc/ansible/facts.d"
+  - "/{{ reuters_etc }}/instance_conf.d"

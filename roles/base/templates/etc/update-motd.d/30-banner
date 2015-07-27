@@ -1,0 +1,16 @@
+#!/bin/sh
+
+version=$(rpm -q --qf '%{version}' system-release)
+figlet -f /usr/share/figlet/small.flf Thomson Reuters
+cat << EOF
+
+    ########################################################
+     Access allowed only to Thomson Reuters approved agents
+    ########################################################
+
+    Amazon Linux version: $version
+    AMI Profile: {{ ami_profile }}
+    https://aws.amazon.com/amazon-linux-ami/$version-release-notes/
+    https://github.com/ThomsonReuters-IPS/ami-provisioning
+
+EOF
