@@ -1,0 +1,6 @@
+---
+dependencies:
+- s3cmd
+- cli53
+- ansible-lint
+- etcd

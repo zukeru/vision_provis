@@ -1,0 +1,8 @@
+#!/bin/bash
+# Drop files into {{ reuters_etc }}/instance_conf.d
+
+
+for i in `ls /{{ reuters_etc }}/instance_conf.d`
+do
+ source /{{ reuters_etc }}/instance_conf.d/$i
+done
