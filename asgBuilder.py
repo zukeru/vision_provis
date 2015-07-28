@@ -373,16 +373,16 @@ repo = "%s"
 playbook = "%s"
 
 
-echo_bash_profile = "echo '%s' >> ~/.bash_profile" % user_echo
+echo_bash_profile = "echo %s >> ~/.bash_profile" % user_echo
 shell_command_execute(echo_bash_profile)
 
 var_user_data = "%s"
 
-for var in var_user_data.split('|'):
-    echo_bash_profile_passed = "echo '%s' >> ~/.bash_profile" % var
+for varb in var_user_data.split('|'):
+    echo_bash_profile_passed = "echo " + varb  + " >> ~/.bash_profile"
     shell_command_execute(echo_bash_profile_passed)
 
-command = 'git clone %s' % repo
+command = 'git clone ' + repo
 shell_command_execute(command)
 
 folder = repo.split('/')[4].replace('.git','')
@@ -390,7 +390,7 @@ folder = repo.split('/')[4].replace('.git','')
 execute_playbook = ('ansible-playbook -i "localhost," -c local' +  '/' + os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook >> ansible.log')
 print execute_playbook
 shell_command_execute(execute_playbook)
-'''%(str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
+''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
 text_file = open("user-data.py", "wa")
 text_file.write(user_data_ins)    
