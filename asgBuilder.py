@@ -326,32 +326,37 @@ if tags:
     built_tags = build_tags(tags)
 else:
     built_tags = constant_tag
-'''
-user_data_ins = [('export CLOUD_ENVIRONMENT=%s\n' % cloud_environment),
-                 ('export CLOUD_MONITOR_BUCKET=%s\n' % cluster_monitor_bucket),
-                 ('export CLOUD_APP=%sn' % cluster_name),
-                 ('export CLOUD_STACK=%s\n' % cloud_stack),
-                 ('export CLOUD_CLUSTER=%s\n' % cloud_cluster),
-                 ('export CLOUD_AUTO_SCALE_GROUP=%s\n'% cloud_auto_scale_group),
-                 ('export CLOUD_LAUNCH_CONFIG=%s\n'% cloud_launch_config),
-                 ('export EC2_REGION=%s\n' % provider_region),
-                 ('export CLOUD_DEV_PHASE=%s\n'% cloud_dev_phase),
-                 ('export CLOUD_REVISION=%s\n'% cloud_revision),
-                 ('export CLOUD_DOMAIN=%s\n'% cloud_domain),
-                 ('export SG_GROUP=%s\n' % export_env_sg_name)]
 
-for var in in_user_data.split('|'):
-    user_data_ins.append(var + '\n')
 
-text_file = open("user-data", "wa")
+user_data_ins = ('''export CLOUD_ENVIRONMENT=%s\n
+                    export CLOUD_MONITOR_BUCKET=%s\n
+                    export CLOUD_APP=%s\n
+                    export CLOUD_STACK=%s\n
+                    export CLOUD_CLUSTER=%s\n
+                    export CLOUD_AUTO_SCALE_GROUP=%s\n
+                    export CLOUD_LAUNCH_CONFIG=%s\n
+                    export EC2_REGION=%s\n
+                    export CLOUD_DEV_PHASE=%s\n
+                    export CLOUD_REVISION=%s\n
+                    export CLOUD_DOMAIN=%s\n
+                    export SG_GROUP=%s\n''' % (cloud_environment,
+                                                cluster_monitor_bucket,
+                                                cluster_name,
+                                                cloud_stack,
+                                                cloud_cluster,
+                                                cloud_auto_scale_group,
+                                                cloud_launch_config,
+                                                provider_region,
+                                                cloud_dev_phase,
+                                                cloud_revision,
+                                                cloud_domain,
+                                                export_env_sg_name))
 
-for line in user_data_ins:
-    text_file.write(line)
-    
-text_file.close()
-'''
-    
+
+  
 user_data_ins = [('''
+#!/usr/bin/python
+
 import os
 import subprocess
 import time
@@ -367,21 +372,25 @@ def shell_command_execute(command):
 repo = "%s"
 playbook = "%s"
 
+
+echo_bash_profile = "echo '%s' >> ~/.bash_profile" % user_echo
+shell_command_execute(echo_bash_profile)
+
 var_user_data = "%s"
 
 for var in var_user_data.split('|'):
-    # export env varsuser_data_ins.append(var + '\n')
-    print var
+    echo_bash_profile_passed = "echo '%s' >> ~/.bash_profile" % var
+    shell_command_execute(echo_bash_profile_passed)
 
 command = 'git clone %s' % repo
 shell_command_execute(command)
 
 folder = repo.split('/')[4].replace('.git','')
 #https://github.com/zukeru/vision_provis.git
-execute_playbook = ('ansible-playbook -i "localhost," -c local %s/%s/%s >> ansible.log' % (os.path.dirname(os.path.realpath(__file__)),folder, playbook))
+execute_playbook = ('ansible-playbook -i "localhost," -c local' +  '/' + os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook >> ansible.log')
 print execute_playbook
 shell_command_execute(execute_playbook)
-'''%(repo, playbook,in_user_data))]
+'''%(repo, playbook,user_data_ins, in_user_data))]
 
 text_file = open("user-data.py", "wa")
 text_file.write(user_data_ins)    
