@@ -329,18 +329,7 @@ else:
     built_tags = constant_tag
 
 
-user_data_ins = ('''export CLOUD_ENVIRONMENT=%s\n
-                    export CLOUD_MONITOR_BUCKET=%s\n
-                    export CLOUD_APP=%s\n
-                    export CLOUD_STACK=%s\n
-                    export CLOUD_CLUSTER=%s\n
-                    export CLOUD_AUTO_SCALE_GROUP=%s\n
-                    export CLOUD_LAUNCH_CONFIG=%s\n
-                    export EC2_REGION=%s\n
-                    export CLOUD_DEV_PHASE=%s\n
-                    export CLOUD_REVISION=%s\n
-                    export CLOUD_DOMAIN=%s\n
-                    export SG_GROUP=%s\n''' % (cloud_environment,
+user_data_ins = ('''export CLOUD_ENVIRONMENT=%s|export CLOUD_MONITOR_BUCKET=%s|export CLOUD_APP=%s|export CLOUD_STACK=%s|export CLOUD_CLUSTER=%s|export CLOUD_AUTO_SCALE_GROUP=%s|export CLOUD_LAUNCH_CONFIG=%s|export EC2_REGION=%s|export CLOUD_DEV_PHASE=%s|export CLOUD_REVISION=%s|export CLOUD_DOMAIN=%s|export SG_GROUP=%s''' % (cloud_environment,
                                                 cluster_monitor_bucket,
                                                 cluster_name,
                                                 cloud_stack,
@@ -356,7 +345,7 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s\n
 
   
 user_data_ins = ('''
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import os
 import subprocess
@@ -374,35 +363,39 @@ repo = "%s"
 playbook = "%s"
 
 
-echo_bash_profile = "echo " + %s + " >> ~/.bash_profile"
-shell_command_execute(echo_bash_profile)
+echo_bash_profile = "%s"
+
+for commands in echo_bash_profile.split('|'):
+    command_to_send = 'echo "' + commands + '" >> /home/ec2-user/.bash_profile'
+    shell_command_execute(commands)
+    shell_command_execute(command_to_send)
 
 var_user_data = "%s"
 
-for varb in var_user_data.split('|'):
-    echo_bash_profile_passed = "echo " + varb  + " >> ~/.bash_profile"
+for commands in var_user_data.split('|'):
+    echo_bash_profile_passed = 'echo "' + commands  + '" >> /home/ec2-user/.bash_profile'
+    shell_command_execute(commands)
     shell_command_execute(echo_bash_profile_passed)
 
 command = 'git clone ' + repo
 shell_command_execute(command)
 
 folder = repo.split('/')[4].replace('.git','')
-#https://github.com/zukeru/vision_provis.git
 execute_playbook = ('ansible-playbook -i "localhost," -c local' +  '/' + os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook >> ansible.log')
 print execute_playbook
 shell_command_execute(execute_playbook)
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
-#text_file = open("user-data.py", "wa")
+text_file = open("user-data", "wa")
 
-encoded = base64.b64encode(user_data_ins)
-#text_file.write(encoded)    
-#text_file.close()    
-#lc_user_data = '${file("%s/user-data.py")}' %wd
+#encoded = base64.b64encode(user_data_ins)
+text_file.write(user_data_ins)    
+text_file.close()    
+lc_user_data = '${file("%s/user-data")}' %wd
 
 launch_config_variable = "${aws_launch_configuration.%s.id}" % cluster_name
 
-launch_configuration = build_lc(cluster_name,cluster_name, lc_image_id, lc_instance_type, lc_public_ip, lc_security_groups, lc_iam_instance_profile, encoded, lc_key_name,block_device_mapping)
+launch_configuration = build_lc(cluster_name,cluster_name, lc_image_id, lc_instance_type, lc_public_ip, lc_security_groups, lc_iam_instance_profile, lc_user_data, lc_key_name,block_device_mapping)
 
 autoscale_group = build_asg(built_tags = built_tags if built_tags else None,
                               asgname = asg_name, 
