@@ -9,6 +9,7 @@ import collections
 import os
 import uuid
 import base64
+import base64
 
 parser = argparse.ArgumentParser()    
 parser.add_argument('--secret_key', help='', required=False)
@@ -393,7 +394,9 @@ shell_command_execute(execute_playbook)
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
 text_file = open("user-data.py", "wa")
-text_file.write(user_data_ins)    
+
+encoded = base64.b64encode(user_data_ins)
+text_file.write(encoded)    
 text_file.close()    
 lc_user_data = '${file("%s/user-data.py")}' %wd
 
