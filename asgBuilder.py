@@ -118,7 +118,7 @@ def build_lc(lc_name, lc_name2, lc_image_id, lc_instance_type, lc_public_ip, lc_
     if lc_iam_instance_profile:
         launch_config_dict['iam_instance_profile'] = lc_iam_instance_profile
     if lc_user_data:
-        launch_config_dict['user_data'] = lc_user_data
+        launch_config_dict['user_data'] = '"' + lc_user_data + '"'
     if lc_key_name:
         launch_config_dict['key_name'] = lc_key_name
     if block_device_mapping:
@@ -393,16 +393,16 @@ print execute_playbook
 shell_command_execute(execute_playbook)
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
-text_file = open("user-data.py", "wa")
+#text_file = open("user-data.py", "wa")
 
 encoded = base64.b64encode(user_data_ins)
-text_file.write(encoded)    
-text_file.close()    
-lc_user_data = '${file("%s/user-data.py")}' %wd
+#text_file.write(encoded)    
+#text_file.close()    
+#lc_user_data = '${file("%s/user-data.py")}' %wd
 
 launch_config_variable = "${aws_launch_configuration.%s.id}" % cluster_name
 
-launch_configuration = build_lc(cluster_name,cluster_name, lc_image_id, lc_instance_type, lc_public_ip, lc_security_groups, lc_iam_instance_profile, lc_user_data, lc_key_name,block_device_mapping)
+launch_configuration = build_lc(cluster_name,cluster_name, lc_image_id, lc_instance_type, lc_public_ip, lc_security_groups, lc_iam_instance_profile, encoded, lc_key_name,block_device_mapping)
 
 autoscale_group = build_asg(built_tags = built_tags if built_tags else None,
                               asgname = asg_name, 
