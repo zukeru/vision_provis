@@ -354,7 +354,7 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s\n
 
 
   
-user_data_ins = [('''
+user_data_ins = ('''
 #!/usr/bin/python
 
 import os
@@ -390,7 +390,7 @@ folder = repo.split('/')[4].replace('.git','')
 execute_playbook = ('ansible-playbook -i "localhost," -c local' +  '/' + os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook >> ansible.log')
 print execute_playbook
 shell_command_execute(execute_playbook)
-'''%(repo, playbook,user_data_ins, in_user_data))]
+'''%(str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
 text_file = open("user-data.py", "wa")
 text_file.write(user_data_ins)    
