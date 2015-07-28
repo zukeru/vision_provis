@@ -118,7 +118,7 @@ def build_lc(lc_name, lc_name2, lc_image_id, lc_instance_type, lc_public_ip, lc_
     if lc_iam_instance_profile:
         launch_config_dict['iam_instance_profile'] = lc_iam_instance_profile
     if lc_user_data:
-        launch_config_dict['user_data'] = '"' + lc_user_data + '"'
+        launch_config_dict['user_data'] = lc_user_data
     if lc_key_name:
         launch_config_dict['key_name'] = lc_key_name
     if block_device_mapping:
