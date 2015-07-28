@@ -373,7 +373,7 @@ repo = "%s"
 playbook = "%s"
 
 
-echo_bash_profile = "echo %s >> ~/.bash_profile" % user_echo
+echo_bash_profile = "echo " + %s + " >> ~/.bash_profile"
 shell_command_execute(echo_bash_profile)
 
 var_user_data = "%s"
