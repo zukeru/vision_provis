@@ -355,7 +355,7 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s\n
 
   
 user_data_ins = ('''
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 import subprocess
