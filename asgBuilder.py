@@ -360,9 +360,9 @@ import time
 
 def shell_command_execute(cmd):
     try:
-    subprocess.Popen(['/bin/bash', '-c', cmd])
+        subprocess.Popen(['/bin/bash', '-c', cmd])
     except:
-    print 'There seems to be an error'
+        print 'There seems to be an error'
 
 repo = "%s"
 
@@ -417,8 +417,8 @@ pr = pb.run()
 
 text_file = open("user-data", "wa")
 
-#encoded = base64.b64encode(user_data_ins)
-text_file.write(user_data_ins)    
+encoded = base64.b64encode(user_data_ins)
+text_file.write(encoded)    
 text_file.close()    
 lc_user_data = '${file("%s/user-data")}' %wd
 
