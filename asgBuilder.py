@@ -345,19 +345,16 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s|export CLOUD_MONITOR_BUCKET=%s|e
 
   
 user_data_ins = ('''
-#!/usr/bin/python
+#!/usr/bin/python 
+import ansible.runner 
+import ansible.playbook 
+import ansible.inventory from ansible 
+import callbacks from ansible 
+import utils 
+import json
 
-import os
-import subprocess
-import time
-import uuid
-
-
-def shell_command_execute(command):
-    p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-    (output, err) = p.communicate()
-    print output
-    return output
+def shell_command_execute(cmd):
+    subprocess.Popen(['/bin/bash', '-c', cmd])
 
 repo = "%s"
 playbook = "%s"
@@ -381,15 +378,46 @@ command = 'git clone ' + repo
 shell_command_execute(command)
 
 folder = repo.split('/')[4].replace('.git','')
-execute_playbook = ('ansible-playbook -i "localhost," -c local' +  '/' + os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook >> ansible.log')
-print execute_playbook
-shell_command_execute(execute_playbook)
+full_path = os.path.dirname(os.path.realpath(__file__)) + '/' + folder + '/' + playbook
+
+## first of all, set up a host (or more) 
+
+example_host = ansible.inventory.host.Host( name = 'localhost')
+ 
+# with its variables to modify the playbook 
+#example_host.set_variable( 'var', 'foo') 
+## secondly set up the group where the host(s) has to be added 
+
+example_group = ansible.inventory.group.Group( name = 'localhost' ) 
+example_group.add_host(example_host) 
+
+## the last step is set up the invetory itself 
+
+example_inventory = ansible.inventory.Inventory() 
+example_inventory.add_group(example_group) 
+example_inventory.subset('localhost') 
+
+# setting callbacks 
+stats = callbacks.AggregateStats() 
+playbook_cb = callbacks.PlaybookCallbacks(verbose=utils.VERBOSITY) 
+runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY) 
+
+# creating the playbook instance to run, based on "test.yml" file 
+pb = ansible.playbook.PlayBook(playbook = full_path, 
+                               stats = stats, callbacks = playbook_cb, 
+                               runner_callbacks = runner_cb,
+                               inventory = example_inventory, 
+                               check=True) 
+# running the playbook 
+pr = pb.run() 
+# print the summary of results for each host 
+print json.dumps(pr, sort_keys=True, indent=4, separators=(',', ': '))
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
 text_file = open("user-data", "wa")
 
-#encoded = base64.b64encode(user_data_ins)
-text_file.write(user_data_ins)    
+encoded = base64.b64encode(user_data_ins)
+text_file.write(encoded)    
 text_file.close()    
 lc_user_data = '${file("%s/user-data")}' %wd
 
