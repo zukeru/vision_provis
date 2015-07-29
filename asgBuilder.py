@@ -345,12 +345,12 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s|export CLOUD_MONITOR_BUCKET=%s|e
 
   
 user_data_ins = ('''
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import ansible.runner 
 from ansible.playbook import PlayBook
-from ansible import inventory 
+from ansible.inventory import Inventory 
 from ansible import callbacks
 import json
 import subprocess 
