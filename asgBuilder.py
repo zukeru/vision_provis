@@ -345,73 +345,77 @@ user_data_ins = ('''export CLOUD_ENVIRONMENT=%s|export CLOUD_MONITOR_BUCKET=%s|e
 
   
 user_data_ins = ('''
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/bin/bash
+echo "#!/usr/bin/env python">> /home/ec2-user/provision.py
+echo "# -*- coding: utf-8 -*-">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "import ansible.runner ">> /home/ec2-user/provision.py
+echo "from ansible.playbook import PlayBook">> /home/ec2-user/provision.py
+echo "from ansible.inventory import Inventory ">> /home/ec2-user/provision.py
+echo "from ansible import callbacks">> /home/ec2-user/provision.py
+echo "import json">> /home/ec2-user/provision.py
+echo "import subprocess ">> /home/ec2-user/provision.py
+echo "import os">> /home/ec2-user/provision.py
+echo "from ansible import utils">> /home/ec2-user/provision.py
+echo "import time">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "def shell_command_execute(cmd):">> /home/ec2-user/provision.py
+echo "    try:">> /home/ec2-user/provision.py
+echo "        subprocess.Popen(['/bin/bash', '-c', cmd])">> /home/ec2-user/provision.py
+echo "    except:">> /home/ec2-user/provision.py
+echo "        print 'There seems to be an error'">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "repo = '%s'">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "playbook = '%s'">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "echo_bash_profile = '%s'">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "for commands in echo_bash_profile.split('|'):">> /home/ec2-user/provision.py
+echo "    command_to_send = 'echo \"' + commands + '\" >> /home/ec2-user/.bash_profile'">> /home/ec2-user/provision.py
+echo "    shell_command_execute(commands)">> /home/ec2-user/provision.py
+echo "    shell_command_execute(command_to_send)">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "var_user_data = '%s'">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "for commands in var_user_data.split('|'):">> /home/ec2-user/provision.py
+echo "    echo_bash_profile_passed = 'echo \"' + commands  + '\" >> /home/ec2-user/.bash_profile'">> /home/ec2-user/provision.py
+echo "    shell_command_execute(commands)">> /home/ec2-user/provision.py
+echo "    shell_command_execute(echo_bash_profile_passed)">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "command_remove = 'rm -rf /home/ec2-user/'+repo">> /home/ec2-user/provision.py
+echo "shell_command_execute(command_remove)">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "command = 'cd /home/ec2-user/; git clone ' + repo">> /home/ec2-user/provision.py
+echo "shell_command_execute(command)">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "folder = repo.split('/')[4].replace('.git','')">> /home/ec2-user/provision.py
+echo "full_path = '/home/ec2-user/' + folder + '/' + playbook">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "time.sleep(6)">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "# setting callbacks ">> /home/ec2-user/provision.py
+echo "stats = callbacks.AggregateStats() ">> /home/ec2-user/provision.py
+echo "playbook_cb = callbacks.PlaybookCallbacks(verbose=utils.VERBOSITY) ">> /home/ec2-user/provision.py
+echo "runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY) ">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "print full_path">> /home/ec2-user/provision.py
+echo "# creating the playbook instance to run, based on "test.yml" file ">> /home/ec2-user/provision.py
+echo "pb = PlayBook(playbook = full_path, ">> /home/ec2-user/provision.py
+echo "                               stats = stats, ">> /home/ec2-user/provision.py
+echo "                               callbacks = playbook_cb, ">> /home/ec2-user/provision.py
+echo "                               runner_callbacks = runner_cb,">> /home/ec2-user/provision.py
+echo "                               inventory = Inventory(["localhost"]), ">> /home/ec2-user/provision.py
+echo "                               check=True) ">> /home/ec2-user/provision.py
+echo "# running the playbook ">> /home/ec2-user/provision.py
+echo "pr = pb.run() ">> /home/ec2-user/provision.py
+echo "">> /home/ec2-user/provision.py
+echo "# print the summary of results for each host ">> /home/ec2-user/provision.py
+echo "#print json.dumps(pr, sort_keys=True, indent=4, separators=(',', ': '))">> /home/ec2-user/provision.py
+ 
 
-import ansible.runner 
-from ansible.playbook import PlayBook
-from ansible.inventory import Inventory 
-from ansible import callbacks
-import json
-import subprocess 
-import os
-from ansible import utils
-import time
-
-def shell_command_execute(cmd):
-    try:
-        subprocess.Popen(['/bin/bash', '-c', cmd])
-    except:
-        print 'There seems to be an error'
-
-repo = "%s"
-
-playbook = "%s"
-
-echo_bash_profile = "%s"
-
-for commands in echo_bash_profile.split('|'):
-    command_to_send = 'echo "' + commands + '" >> /home/ec2-user/.bash_profile'
-    shell_command_execute(commands)
-    shell_command_execute(command_to_send)
-
-var_user_data = "%s"
-
-for commands in var_user_data.split('|'):
-    echo_bash_profile_passed = 'echo "' + commands  + '" >> /home/ec2-user/.bash_profile'
-    shell_command_execute(commands)
-    shell_command_execute(echo_bash_profile_passed)
-
-
-command_remove = 'rm -rf /home/ec2-user/'+repo
-shell_command_execute(command_remove)
-
-command = 'cd /home/ec2-user/; git clone ' + repo
-shell_command_execute(command)
-
-folder = repo.split('/')[4].replace('.git','')
-full_path = '/home/ec2-user/' + folder + '/' + playbook
-
-time.sleep(6)
-
-# setting callbacks 
-stats = callbacks.AggregateStats() 
-playbook_cb = callbacks.PlaybookCallbacks(verbose=utils.VERBOSITY) 
-runner_cb = callbacks.PlaybookRunnerCallbacks(stats, verbose=utils.VERBOSITY) 
-
-print full_path
-# creating the playbook instance to run, based on "test.yml" file 
-pb = PlayBook(playbook = full_path, 
-                               stats = stats, 
-                               callbacks = playbook_cb, 
-                               runner_callbacks = runner_cb,
-                               inventory = Inventory(["localhost"]), 
-                               check=True) 
-# running the playbook 
-pr = pb.run() 
-
-# print the summary of results for each host 
-#print json.dumps(pr, sort_keys=True, indent=4, separators=(',', ': '))
+sudo python /home/ec2-user/provision.py >> /home/ec2-user/provision.log
 
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
