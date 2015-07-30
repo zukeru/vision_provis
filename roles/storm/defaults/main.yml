@@ -5,8 +5,7 @@ storm_group: storm
 storm_uid: 3060
 storm_gid: 3060
 
-storm_zookeeper_servers:
-  - "localhost"
+storm_zookeeper_server: "localhost"
 storm_zookeeper_port: 2181
 storm_nimbus_host: "localhost"
 storm_nimbus_childopts: "-Xmx1024m -Djava.net.preferIPv4Stack=true"

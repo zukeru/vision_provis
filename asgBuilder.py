@@ -409,7 +409,7 @@ echo "pb = PlayBook(playbook = full_path, ">> /home/ec2-user/provision.py
 echo "                               stats = stats, ">> /home/ec2-user/provision.py
 echo "                               callbacks = playbook_cb, ">> /home/ec2-user/provision.py
 echo "                               runner_callbacks = runner_cb,">> /home/ec2-user/provision.py
-echo "                               inventory = Inventory([\"localhost\"]), ">> /home/ec2-user/provision.py
+echo "                               inventory = Inventory(['localhost']), ">> /home/ec2-user/provision.py
 echo "                               check=True) ">> /home/ec2-user/provision.py
 echo "# running the playbook ">> /home/ec2-user/provision.py
 echo "pr = pb.run() ">> /home/ec2-user/provision.py

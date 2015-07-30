@@ -51,4 +51,4 @@
   file: path={{ storm_local_dir }} owner={{ storm_user }} group={{ storm_group }} mode=0750 state=directory
 
 - name: Apache Storm | Update configuration
-  template: src=storm.yaml.j2 dest=/usr/local/etc/storm/conf/storm.yaml owner={{ storm_user }} group={{ storm_group }} mode=0644
+  template: src=storm.yaml dest=/usr/local/etc/storm/conf/storm.yaml owner={{ storm_user }} group={{ storm_group }} mode=0644
