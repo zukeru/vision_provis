@@ -98,7 +98,7 @@ security_group_name = []
 wd = args.wd
 playbook = args.playbook
 repo = args.repo
-
+instance_name = ''
 
 def build_lc(lc_name, lc_name2, lc_image_id, lc_instance_type, lc_public_ip, lc_security_groups, lc_iam_instance_profile, lc_user_data, lc_key_name,block_device_mapping):
     launch_config_dict = collections.OrderedDict()
@@ -147,6 +147,9 @@ def build_tags(tags):
     for tag in tags:
         if len(tag) > 5:
             values = tag.split(':')
+            if 'Name' in str(tag):
+                if 'nimbus' in str(tag).lower():
+                    instance_name = values[1]            
             built_tags = built_tags + """
             tag {
                 key = "%s"
