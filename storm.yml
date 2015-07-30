@@ -4,4 +4,4 @@
   sudo: yes
 
   roles:
-  - storm
+  - - { role: storm, storm_version: apache-storm-0.9.3 }
