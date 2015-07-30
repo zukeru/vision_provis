@@ -406,17 +406,14 @@ echo "pb = PlayBook(playbook = full_path, ">> /home/ec2-user/provision.py
 echo "                               stats = stats, ">> /home/ec2-user/provision.py
 echo "                               callbacks = playbook_cb, ">> /home/ec2-user/provision.py
 echo "                               runner_callbacks = runner_cb,">> /home/ec2-user/provision.py
-echo "                               inventory = Inventory(["localhost"]), ">> /home/ec2-user/provision.py
+echo "                               inventory = Inventory([\"localhost\"]), ">> /home/ec2-user/provision.py
 echo "                               check=True) ">> /home/ec2-user/provision.py
 echo "# running the playbook ">> /home/ec2-user/provision.py
 echo "pr = pb.run() ">> /home/ec2-user/provision.py
 echo "">> /home/ec2-user/provision.py
 echo "# print the summary of results for each host ">> /home/ec2-user/provision.py
 echo "#print json.dumps(pr, sort_keys=True, indent=4, separators=(',', ': '))">> /home/ec2-user/provision.py
- 
-
 sudo python /home/ec2-user/provision.py >> /home/ec2-user/provision.log
-
 ''' % (str(repo), str(playbook),str(user_data_ins), str(in_user_data)))
 
 text_file = open("user-data", "wa")
